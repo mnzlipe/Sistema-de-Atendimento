@@ -31,22 +31,21 @@ O diagrama abaixo representa a estrutura lógica e física das tabelas, chaves p
 
 ```mermaid
 erDiagram
-    PESSOA ||--o| ATENDENTE : "é especializado em"
     PESSOA ||--o| CLIENTE : "é especializado em"
-    
-    ATENDENTE ||--o{ ATENDENTE_FILA : "está habilitado em"
-    FILA ||--o{ ATENDENTE_FILA : "possui atendentes"
-    
-    ATENDENTE ||--o{ ATENDIMENTO : "realiza"
+    PESSOA ||--o| ATENDENTE : "é especializado em"
     CLIENTE ||--o{ ATENDIMENTO : "recebe"
-    FILA ||--o{ ATENDIMENTO : "pertence a"
+    ATENDENTE ||--o{ ATENDIMENTO : "realiza"
+    FILA ||--o{ ATENDIMENTO : "organiza"
+    ATENDENTE ||--o{ ATENDENTE_FILA : "pertence / está habilitado em"
+    FILA ||--o{ ATENDENTE_FILA : "possui atendentes"
+    ATENDIMENTO ||--o| AVALIACAO : "gera"
 
     PESSOA {
         INT id_pessoa PK "SERIAL"
         VARCHAR(120) nome "NOT NULL"
         VARCHAR(14) cpf "UNIQUE, NOT NULL"
         VARCHAR(120) email "UNIQUE, NOT NULL"
-        VARCHAR(20) telefone
+        VARCHAR(20) telefone ""
         TIMESTAMP data_cadastro "DEFAULT CURRENT_TIMESTAMP"
     }
 
@@ -65,26 +64,35 @@ erDiagram
     FILA {
         INT id_fila PK "SERIAL"
         VARCHAR(60) nome "NOT NULL"
-        TEXT descricao
+        TEXT descricao ""
         INT prioridade "DEFAULT 1"
         BOOLEAN ativa "DEFAULT TRUE"
     }
 
     ATENDENTE_FILA {
-        INT id_atendente PK, FK "-> ATENDENTE.id_atendente"
-        INT id_fila PK, FK "-> FILA.id_fila"
-        TIMESTAMP data_vinculo "DEFAULT CURRENT_TIMESTAMP"
+        INT id_atendente PK,FK "-> ATENDENTE.id_atendente"
+        INT id_fila PK,FK "-> FILA.id_fila"
+        TIMESTAMP data_vinculo ""
     }
 
     ATENDIMENTO {
-        BIGSERIAL id_atendimento PK
+        BIGSERIAL id_atendimento PK ""
         INT id_cliente FK "NOT NULL -> CLIENTE.id_cliente"
         INT id_atendente FK "NOT NULL -> ATENDENTE.id_atendente"
         INT id_fila FK "NOT NULL -> FILA.id_fila"
         TIMESTAMP data_hora_inicio "NOT NULL DEFAULT CURRENT_TIMESTAMP"
-        TIMESTAMP data_hora_fim
+        TIMESTAMP data_hora_fim ""
         VARCHAR(30) status "ex: Em Andamento, Concluído, Cancelado"
-        TEXT observacoes
+        TEXT observacoes ""
+    }
+
+    AVALIACAO {
+        INT id_avaliacao PK "SERIAL"
+        BIGINT id_atendimento FK "NOT NULL -> ATENDIMENTO.id_atendimento"
+        INT nota "CHECK (nota BETWEEN 1 AND 5)"
+        TEXT comentario ""
+        INT curtidas "DEFAULT 0"
+        TIMESTAMP data_avaliacao "DEFAULT CURRENT_TIMESTAMP"
     }
 ```
 
