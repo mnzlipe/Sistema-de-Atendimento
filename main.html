@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Atendimento - SGA</title>
+    <style>
+        :root {
+            --bg-body: #f1f5f9;
+            --bg-card: #ffffff;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary: #64748b;
+            --border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --success: #16a34a;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Barra Lateral */
+        aside {
+            width: 250px;
+            background-color: var(--bg-card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 16px;
+        }
+
+        .logo {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        nav a {
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            color: var(--secondary);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        nav a.active, nav a:hover {
+            background-color: #eff6ff;
+            color: var(--primary);
+        }
+
+        /* Conteúdo Principal */
+        main {
+            flex: 1;
+            padding: 32px 40px;
+            overflow-y: auto;
+        }
+
+        /* Topo */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .header-title h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: var(--bg-card);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            background-color: #dbeafe;
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        /* Grid de Métricas */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .metric-card {
+            background-color: var(--bg-card);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .metric-card span {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .metric-card h2 {
+            font-size: 1.6rem;
+            margin-top: 8px;
+            font-weight: 700;
+        }
+
+        /* Estrutura Central (Duas Colunas) */
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        /* Coluna da Inovação: Mural Social */
+        .feed-container {
+            background-color: var(--bg-card);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            padding: 24px;
+        }
+
+        .feed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .feed-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .feed-header .badge {
+            background-color: #dcfce7;
+            color: var(--success);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .post-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            background-color: #ffffff;
+        }
+
+        .post-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .post-author {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .post-queue {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .stars {
+            color: var(--warning);
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+        }
+
+        .post-text {
+            font-size: 0.9rem;
+            color: #334155;
+            line-height: 1.5;
+            margin: 8px 0 12px;
+        }
+
+        .post-footer {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px dashed var(--border);
+            padding-top: 10px;
+        }
+
+        .like-btn {
+            background-color: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Coluna Lateral: Fila em Andamento */
+        .queue-box {
+            background-color: var(--bg-card);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .queue-box h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .current-call {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .current-call span {
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .current-call h4 {
+            font-size: 1.3rem;
+            margin: 6px 0;
+        }
+
+        .btn-call {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-call:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .waiting-list {
+            list-style: none;
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
+        .waiting-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navegação -->
+    <aside>
+        <div class="logo">
+            <span>🗂️</span> SGA Central
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" class="active">Painel Principal</a></li>
+                <li><a href="#">Minhas Filas</a></li>
+                <li><a href="#">Cadastrar Pessoa</a></li>
+                <li><a href="#">Relatórios</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Área de Conteúdo -->
+    <main>
+        <header>
+            <div class="header-title">
+                <h1>Painel Operacional e Social</h1>
+                <p>Monitore suas filas ativas e o mural de avaliações da equipe.</p>
+            </div>
+            <div class="user-profile">
+                <div class="avatar">AT</div>
+                <div>
+                    <div style="font-size: 0.85rem; font-weight: 600;">Luiz Menezes</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Matrícula: 2026-A10</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Indicadores -->
+        <section class="metrics-grid">
+            <div class="metric-card">
+                <span>Atendimentos Hoje</span>
+                <h2>18</h2>
+            </div>
+            <div class="metric-card">
+                <span>Tempo Médio</span>
+                <h2>07m 42s</h2>
+            </div>
+            <div class="metric-card">
+                <span>Média de Satisfação</span>
+                <h2>4.9 / 5.0</h2>
+            </div>
+            <div class="metric-card">
+                <span>Reconhecimentos</span>
+                <h2>43 👍</h2>
+            </div>
+        </section>
+
+        <!-- Grade Operacional + Inovação Social -->
+        <div class="dashboard-content">
+            
+            <!-- Mural de Feedbacks e Curtidas (Inovação) -->
+            <section class="feed-container">
+                <div class="feed-header">
+                    <h3>Mural de Feedbacks e Reconhecimento</h3>
+                    <span class="badge">Inovação Social</span>
+                </div>
+
+                <!-- Avaliação 1 -->
+                <article class="post-card">
+                    <div class="post-top">
+                        <div>
+                            <div class="post-author">Mariana Siqueira</div>
+                            <div class="post-queue">Fila: Suporte Prioritário • Atendimento #1042</div>
+                        </div>
+                        <div class="stars">★★★★★</div>
+                    </div>
+                    <p class="post-text">
+                        "Atendimento ágil e muito atencioso do operador. Conseguiu emitir minha documentação em menos de cinco minutos sem nenhuma burocracia."
+                    </p>
+                    <div class="post-footer">
+                        <span>Hoje às 14:22</span>
+                        <button class="like-btn">👍 14 Curtidas</button>
+                    </div>
+                </article>
+
+                <!-- Avaliação 2 -->
+                <article class="post-card">
+                    <div class="post-top">
+                        <div>
+                            <div class="post-author">Carlos Eduardo Lima</div>
+                            <div class="post-queue">Fila: Cadastro Geral • Atendimento #1038</div>
+                        </div>
+                        <div class="stars">★★★★★</div>
+                    </div>
+                    <p class="post-text">
+                        "Excelente postura profissional. Fui bem orientado sobre a validação do meu CPF e dos contatos no sistema."
+                    </p>
+                    <div class="post-footer">
+                        <span>Hoje às 11:05</span>
+                        <button class="like-btn">👍 8 Curtidas</button>
+                    </div>
+                </article>
+
+                <!-- Avaliação 3 -->
+                <article class="post-card">
+                    <div class="post-top">
+                        <div>
+                            <div class="post-author">Renata Vasconcelos</div>
+                            <div class="post-queue">Fila: Atendimento Presencial • Atendimento #1029</div>
+                        </div>
+                        <div class="stars">★★★★☆</div>
+                    </div>
+                    <p class="post-text">
+                        "O sistema organizou a fila de espera com rapidez. O processo de encerramento foi direto e transparente."
+                    </p>
+                    <div class="post-footer">
+                        <span>Ontem às 16:50</span>
+                        <button class="like-btn">👍 21 Curtidas</button>
+                    </div>
+                </article>
+            </section>
+
+            <!-- Ações e Fila Corrente -->
+            <aside class="queue-box">
+                <h3>Operação Atual</h3>
+                <div class="current-call">
+                    <span>ATENDENDO AGORA</span>
+                    <h4>Atanael Passos</h4>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">Fila: Geral • Senha: G-044</p>
+                </div>
+
+                <button class="btn-call">Concluir e Chamar Próximo</button>
+
+                <div>
+                    <h4 style="font-size: 0.9rem; font-weight: 600; margin-bottom: 8px;">Próximos da Fila</h4>
+                    <ul class="waiting-list">
+                        <li><span>Rayssa Veloso</span> <strong>P-012</strong></li>
+                        <li><span>Layla Geovanna</span> <strong>G-045</strong></li>
+                        <li><span>Patrick Felipe</span> <strong>G-046</strong></li>
+                    </ul>
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+</body>
+</html>
